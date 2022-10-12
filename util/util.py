@@ -37,7 +37,7 @@ def tensor2im_hdr(image_tensor, normalize=True):
     # image_numpy = np.clip(image_numpy, 0, 255)
     # if image_numpy.shape[2] == 1 or image_numpy.shape[2] > 3:        
     #     image_numpy = image_numpy[:,:,0]
-    return image_numpy
+    return image_numpy ** 2.4
 
 # Converts a one-hot tensor into a colorful label map
 def tensor2label(label_tensor, n_label, imtype=np.uint8):

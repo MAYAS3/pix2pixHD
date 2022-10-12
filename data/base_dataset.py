@@ -1,3 +1,4 @@
+import torch
 import torch.utils.data as data
 from PIL import Image
 import torchvision.transforms as transforms
@@ -30,7 +31,7 @@ def get_params(opt, size):
     flip = random.random() > 0.5
     return {'crop_pos': (x, y), 'flip': flip}
 
-def get_transform(opt, params, method=Image.BICUBIC, normalize=True):
+def get_transform(opt, params, method=Image.BICUBIC, normalize=True, hdr=False):
     transform_list = []
     if 'resize' in opt.resize_or_crop:
         osize = [opt.loadSize, opt.loadSize]
@@ -41,7 +42,7 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=True):
     if 'crop' in opt.resize_or_crop:
         transform_list.append(transforms.Lambda(lambda img: __crop(img, params['crop_pos'], opt.fineSize)))
 
-    if opt.resize_or_crop == 'none':
+    if opt.resize_or_crop == 'none' and not hdr:
         base = float(2 ** opt.n_downsample_global)
         if opt.netG == 'local':
             base *= (2 ** opt.n_local_enhancers)
@@ -50,7 +51,8 @@ def get_transform(opt, params, method=Image.BICUBIC, normalize=True):
     if opt.isTrain and not opt.no_flip:
         transform_list.append(transforms.Lambda(lambda img: __flip(img, params['flip'])))
 
-    transform_list += [transforms.ToTensor()]
+    if not hdr:
+        transform_list += [transforms.ToTensor()]
 
     if normalize:
         transform_list += [transforms.Normalize((0.5, 0.5, 0.5),

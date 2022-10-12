@@ -15,6 +15,7 @@ import util.util as util
 from util.visualizer import Visualizer
 
 opt = TrainOptions().parse()
+opt.no_flip = True  # no flip because PIL doesn't support HDR so preprocessing functions must be modified to work
 iter_path = os.path.join(opt.checkpoints_dir, opt.name, 'iter.txt')
 if opt.continue_train:
     try:

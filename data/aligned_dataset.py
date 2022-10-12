@@ -1,7 +1,11 @@
 import os.path
+
+import torch
 from data.base_dataset import BaseDataset, get_params, get_transform, normalize
 from data.image_folder import make_dataset
 from PIL import Image
+
+from hdrio import imread
 
 class AlignedDataset(BaseDataset):
     def initialize(self, opt):
@@ -48,8 +52,13 @@ class AlignedDataset(BaseDataset):
         ### input B (real images)
         if self.opt.isTrain or self.opt.use_encoded_image:
             B_path = self.B_paths[index]   
-            B = Image.open(B_path).convert('RGB')
-            transform_B = get_transform(self.opt, params)      
+
+            # B = Image.open(B_path).convert('RGB')
+            B = imread(B_path)
+            B= torch.tensor(B).permute(2, 0, 1)
+
+            transform_B = get_transform(self.opt, params, hdr=True)
+               
             B_tensor = transform_B(B)
 
         ### if using instance maps        

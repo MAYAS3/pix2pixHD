@@ -23,6 +23,22 @@ def tensor2im(image_tensor, imtype=np.uint8, normalize=True):
         image_numpy = image_numpy[:,:,0]
     return image_numpy.astype(imtype)
 
+def tensor2im_hdr(image_tensor, normalize=True):
+    if isinstance(image_tensor, list):
+        image_numpy = []
+        for i in range(len(image_tensor)):
+            image_numpy.append(tensor2im(image_tensor[i], normalize))
+        return image_numpy
+    image_numpy = image_tensor.cpu().float().numpy()
+    if normalize:
+        image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) / 2.0
+    else:
+        image_numpy = np.transpose(image_numpy, (1, 2, 0))
+    # image_numpy = np.clip(image_numpy, 0, 255)
+    # if image_numpy.shape[2] == 1 or image_numpy.shape[2] > 3:        
+    #     image_numpy = image_numpy[:,:,0]
+    return image_numpy
+
 # Converts a one-hot tensor into a colorful label map
 def tensor2label(label_tensor, n_label, imtype=np.uint8):
     if n_label == 0:

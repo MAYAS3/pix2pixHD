@@ -11,6 +11,7 @@ import torch
 
 from PIL import Image
 import numpy as np
+from hdrio import imread
 
 opt = TestOptions().parse(save=False)
 opt.nThreads = 1   # test code only supports nThreads = 1
@@ -62,8 +63,8 @@ for i, data in enumerate(dataset):
         generated = model.inference(data['label'], data['inst'], data['image'])
         
     visuals = OrderedDict([('input_label', util.tensor2label(data['label'][0], opt.label_nc)),
-                           ('synthesized_image', util.tensor2im(generated.data[0])),
-                           ("ground_truth", np.asarray(Image.open(data["path"][0].replace("test_A", "test_B"))))])
+                           ('synthesized_image', util.tensor2im_hdr(generated.data[0])), #TODO: use correct postprocessing functions
+                           ("ground_truth", imread(data["path"][0].replace("test_A", "test_B").replace("png", "exr")))])
     img_path = data['path']
     print('process image... %s' % img_path)
     visualizer.save_images(webpage, visuals, img_path)

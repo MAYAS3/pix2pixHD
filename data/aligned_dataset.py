@@ -6,6 +6,8 @@ from data.image_folder import make_dataset
 from PIL import Image
 
 from hdrio import imread
+from contextlib import redirect_stdout
+import io
 
 class AlignedDataset(BaseDataset):
     def initialize(self, opt):
@@ -54,7 +56,9 @@ class AlignedDataset(BaseDataset):
             B_path = self.B_paths[index]   
 
             # B = Image.open(B_path).convert('RGB')
-            B = imread(B_path)
+            f = io.StringIO()
+            with redirect_stdout(f):
+                B = imread(B_path)
             B= torch.tensor(B).permute(2, 0, 1)
 
             transform_B = get_transform(self.opt, params, hdr=True)

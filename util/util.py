@@ -1,4 +1,5 @@
 from __future__ import print_function
+from hdrio import imsave
 import torch
 import numpy as np
 from PIL import Image
@@ -50,9 +51,12 @@ def tensor2label(label_tensor, n_label, imtype=np.uint8):
     label_numpy = np.transpose(label_tensor.numpy(), (1, 2, 0))
     return label_numpy.astype(imtype)
 
-def save_image(image_numpy, image_path):
-    image_pil = Image.fromarray(image_numpy)
-    image_pil.save(image_path)
+def save_image(image_numpy, image_path, hdr=False):
+    if not hdr:
+        image_pil = Image.fromarray(image_numpy)
+        image_pil.save(image_path)
+    else:
+        imsave(image_path, image_numpy)
 
 def mkdirs(paths):
     if isinstance(paths, list) and not isinstance(paths, str):

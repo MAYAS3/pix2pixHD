@@ -121,9 +121,12 @@ class Visualizer():
         links = []
 
         for label, image_numpy in visuals.items():
-            image_name = '%s_%s.jpg' % (name, label)
+            if label == "input_label":
+                image_name = '%s_%s.jpg' % (name, label)
+            else:
+                image_name = '%s_%s.exr' % (name, label) 
             save_path = os.path.join(image_dir, image_name)
-            util.save_image(image_numpy, save_path)
+            util.save_image(image_numpy, save_path, hdr=not label == "input_label")
 
             ims.append(image_name)
             txts.append(label)
